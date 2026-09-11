@@ -217,3 +217,25 @@
   font-size: 32px;
   font-weight: 600;
 }
+
+.word-slots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.slot {
+  width: 74px;
+  height: 74px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: var(--bg);
+  box-sizing: border-box;
+}

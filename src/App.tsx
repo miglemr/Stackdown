@@ -6,6 +6,7 @@ import Board from './components/Board';
 import layout from './game/layout';
 import words from './data/words';
 import sequence from './data/sequence';
+import WordSlots from './components/WordSlots';
 
 function App() {
   const initProps = {
@@ -18,6 +19,7 @@ function App() {
   return (
     <GameContext.Provider value={store}>
       <Board />
+      <WordSlots />
     </GameContext.Provider>
   );
 }

@@ -10,6 +10,7 @@ type TileProps = {
 
 function Tile({ tile }: TileProps) {
   const store = useContext(GameContext);
+
   if (!store) throw new Error('Missing GameContext.Provider in the tree');
 
   const selectTile = useStore(store, s => s.selectTile);
