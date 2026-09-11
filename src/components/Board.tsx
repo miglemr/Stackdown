@@ -1,11 +1,14 @@
-import type { TileData } from '../types/game';
+import { useContext } from 'react';
+import { useStore } from 'zustand';
 import Tile from './Tile';
+import { GameContext } from '../store/GameContext';
 
-type BoardProps = {
-  tiles: TileData[];
-};
+function Board() {
+  const store = useContext(GameContext);
+  if (!store) throw new Error('Missing GameContext.Provider in the tree');
 
-function Board({ tiles }: BoardProps) {
+  const tiles = useStore(store, state => state.tiles);
+
   return (
     <div className="board">
       {tiles.map(tile => (

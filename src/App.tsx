@@ -1,19 +1,24 @@
+import { useState } from 'react';
 import './App.css';
+import createGameStore from './store/createGameStore';
+import { GameContext } from './store/GameContext';
 import Board from './components/Board';
 import layout from './game/layout';
-import sequence from './data/sequence';
 import words from './data/words';
-import populateTiles from './game/populateTiles';
+import sequence from './data/sequence';
 
 function App() {
-  const tiles = populateTiles(layout, words, sequence);
+  const initProps = {
+    layout,
+    words,
+    sequence,
+  };
+  const [store] = useState(() => createGameStore(initProps));
 
   return (
-    <div>
-      <h1>Stackdown 😎</h1>
-
-      <Board tiles={tiles} />
-    </div>
+    <GameContext.Provider value={store}>
+      <Board />
+    </GameContext.Provider>
   );
 }
 
