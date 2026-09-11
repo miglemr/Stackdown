@@ -4,6 +4,7 @@ export type TileData = {
   x: number;
   y: number;
   zIndex: number;
+  blockedBy: number[];
 };
 
 export type LayoutData = Omit<TileData, 'letter'>;

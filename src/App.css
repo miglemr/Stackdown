@@ -208,6 +208,11 @@
   box-sizing: border-box;
 }
 
+.tile:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .letter {
   font-size: 32px;
   font-weight: 600;

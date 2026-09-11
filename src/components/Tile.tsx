@@ -8,9 +8,10 @@ type TileProps = {
 
 function Tile({ tile }: TileProps) {
   const selectTile = useGameStore(state => state.selectTile);
-  const removed = useGameStore(state => state.removedTiles.includes(tile.id));
+  const removedTiles = useGameStore(state => state.removedTiles);
+  const blocked = tile.blockedBy.some(id => !removedTiles.includes(id));
 
-  if (removed) {
+  if (removedTiles.includes(tile.id)) {
     return null;
   }
 
@@ -22,6 +23,7 @@ function Tile({ tile }: TileProps) {
         top: tile.y,
         zIndex: tile.zIndex,
       }}
+      disabled={blocked}
       onClick={() => selectTile(tile.id)}
     >
       <Letter letter={tile.letter} />
