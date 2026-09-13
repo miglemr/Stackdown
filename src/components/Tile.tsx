@@ -1,8 +1,8 @@
+import { memo, useContext } from 'react';
+import { useStore } from 'zustand';
 import Letter from './Letter';
 import type { TileData } from '../types/game';
 import { GameContext } from '../store/GameContext';
-import { useContext } from 'react';
-import { useStore } from 'zustand';
 
 type TileProps = {
   tile: TileData;
@@ -11,15 +11,31 @@ type TileProps = {
 function Tile({ tile }: TileProps) {
   const store = useContext(GameContext);
 
-  if (!store) throw new Error('Missing GameContext.Provider in the tree');
+  if (!store) {
+    throw new Error('Missing GameContext.Provider in the tree');
+  }
 
-  const selectTile = useStore(store, s => s.selectTile);
-  const selectedTiles = useStore(store, s => s.selectedTiles);
-  const blocked = tile.blockedBy.some(
-    id => !selectedTiles.some(selectedTile => selectedTile.id === id),
+  const selectTile = useStore(store, state => state.selectTile);
+
+  const selected = useStore(store, state =>
+    state.selectedTiles.some(selectedTile => selectedTile.id === tile.id),
   );
 
-  if (selectedTiles.some(selectedTile => selectedTile.id === tile.id)) {
+  const blocked = useStore(store, state => {
+    const selectedIds = new Set(
+      state.selectedTiles.map(selectedTile => selectedTile.id),
+    );
+
+    const removedIds = new Set(
+      state.removedTiles.map(removedTile => removedTile.id),
+    );
+
+    return tile.blockedBy.some(
+      id => !selectedIds.has(id) && !removedIds.has(id),
+    );
+  });
+
+  if (selected) {
     return null;
   }
 
@@ -39,4 +55,4 @@ function Tile({ tile }: TileProps) {
   );
 }
 
-export default Tile;
+export default memo(Tile);

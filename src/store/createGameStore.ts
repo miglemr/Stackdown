@@ -2,14 +2,16 @@ import { createStore } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { LayoutData, TileData } from '../types/game';
 import populateTiles from '../game/populateTiles';
+import checkAnswer from '../game/checkAnswer';
 
 interface GameProps {
   tiles: TileData[];
   selectedTiles: TileData[];
   removedTiles: TileData[];
+  wordOrder: number;
 }
 
-interface InitPrpops {
+interface InitProps {
   layout: LayoutData[];
   words: string[];
   sequence: number[];
@@ -23,11 +25,12 @@ interface GameState extends GameProps {
 
 type GameStore = ReturnType<typeof createGameStore>;
 
-const createGameStore = (initProps: InitPrpops) => {
+const createGameStore = (initProps: InitProps) => {
   const DEFAULT_PROPS: GameProps = {
     tiles: [],
     selectedTiles: [],
     removedTiles: [],
+    wordOrder: 1,
   };
 
   return createStore<GameState>()(
@@ -42,10 +45,38 @@ const createGameStore = (initProps: InitPrpops) => {
           initProps.sequence,
         ),
 
-        selectTile: (tile: TileData) =>
-          set(state => ({
-            selectedTiles: [...state.selectedTiles, tile],
-          })),
+        selectTile: (selectedTile: TileData) =>
+          set(state => {
+            const selectedTiles = [...state.selectedTiles, selectedTile];
+            const selectedTileIds = new Set(selectedTiles.map(tile => tile.id));
+
+            if (selectedTiles.length === 5) {
+              const correct = checkAnswer(
+                selectedTiles,
+                initProps.sequence,
+                state.wordOrder,
+              );
+
+              if (correct) {
+                return {
+                  selectedTiles: [],
+                  tiles: state.tiles.filter(
+                    tile => !selectedTileIds.has(tile.id),
+                  ),
+                  removedTiles: [...state.removedTiles, ...selectedTiles],
+                  wordOrder: state.wordOrder + 1,
+                };
+              }
+
+              return {
+                selectedTiles: [],
+              };
+            }
+
+            return {
+              selectedTiles,
+            };
+          }),
 
         unselectTile: (tile: TileData) =>
           set(state => ({
